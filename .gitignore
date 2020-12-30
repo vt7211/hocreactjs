@@ -10,6 +10,7 @@ logs
 **/*.back.*
 
 c01
+tailop
 node_modules
 **/node_modules
 **/src.old
