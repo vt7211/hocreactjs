@@ -11,7 +11,8 @@ export default function Button({
   text,
   type,
   size,
-  spin
+  spin,
+  link
 }) {
   const svg = <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
   <circle cx={50} cy={50} fill="none" stroke="currentColor" strokeWidth={10} r={35} strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(120.057 50 50)">
@@ -26,16 +27,28 @@ export default function Button({
         setlocalType(type);
     }
   }, [type])
-
+  if(link){
+    return(
+      <a href="#" 
+      href={link}
+      className={classnames('btn', {
+          'btn-default': localType === 'btn-default',
+          'btn-primary': localType === 'primary',
+          'btn-category': localType === 'category',
+          'btn-size-large': size === 'large',
+        })}
+      >{ spin && svg } {text}</a>
+    )
+  }
   return (
-    <a href="#" 
+    <button href="#" 
     className={classnames('btn', {
         'btn-default': localType === 'btn-default',
         'btn-primary': localType === 'primary',
         'btn-category': localType === 'category',
         'btn-size-large': size === 'large',
       })}
-    >{ spin && svg } {text}</a>
+    >{ spin && svg } {text}</button>
   )
 }
 

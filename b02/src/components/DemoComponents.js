@@ -51,20 +51,24 @@ export default function DemoComponent() {
           />
         </div>
         <div className="tcl-col-4">
-          <Button href="#"
+          <Button
             text="View More"
           />
-          <Button href="#"
+          <Button
+            link="#"
+            text="Button Link"
+          />
+          <Button
             text="View More"
             type="category"
           />
-          <Button href="#"
+          <Button
             text="Load More"
             type="primary"
             spin
             size="large"
           />
-          <Button href="#"
+          <Button
             text="Submit"
             type="primary"
             size="large"
