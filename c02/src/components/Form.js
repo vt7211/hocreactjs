@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { actsetItemSelected } from '../store/actions';
 
 function Form(props) {
-    const itemSelected = props.itemSelected;
+    const dispatch = useDispatch();
+    const itemSelected = useSelector(state => state.itemSelected);
+
     const onClickSubmit = props.onClickSubmit;
     const onClickCancel = props.onClickCancel;
 
@@ -12,7 +16,8 @@ function Form(props) {
 
     
     const updateItem = (item) => {
-        if(item !== null) {
+        console.log('updateItem',item);
+        if(item) {
             setTask_id(item.id);
             setTask_name(item.name);
             setTask_level(item.level);
@@ -44,22 +49,22 @@ function Form(props) {
         onClickCancel();
     }
     useEffect(() =>{
+        // console.log('form',itemSelected);
         updateItem(itemSelected);
-    })
+    },[useSelector(state => state.itemSelected)])
     return (
         <div className="row">
             <div className="col-md-offset-7 col-md-5">
                 <form onSubmit={handleSubmit} className="form-inline">
 
                     <div className="form-group">
-                        <label className="sr-only" htmlFor>label</label>
+                        <label className="sr-only" >label</label>
                         <input value={task_name} onChange={handleChange} name="task_name" type="text" className="form-control" placeholder="Task Name" />
                     </div>
 
                     <div className="form-group">
-                        <label className="sr-only" htmlFor>label</label>
+                        <label className="sr-only" >label</label>
                         <select value={task_level} onChange={handleChange}  name="task_level" className="form-control" required="required" >
-                    Small
                             <option value={0}>Small</option>
                             <option value={1}>Medium</option>
                             <option value={2}>High</option>

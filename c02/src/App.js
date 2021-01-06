@@ -4,28 +4,29 @@ import Control from './components/Control';
 import Form from './components/Form';
 import List from './components/List';
 import { v4 as uuidv4 } from 'uuid';
-import {filter, includes, orderBy as funcOrderBy, remove, reject } from 'lodash';
+import {filter, includes, orderBy as funcOrderBy, remove, (reject) } from 'lodash';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { actSetIsShowForm, actSetItems, actsetItemSelected, actSetOrderBy, actSetOrderDir, actSetStrSearch } from './store/actions';
+
 // import tasks from './mocks/tasks';
 
 // const uuidv4 = require('uuid/v4');
 
 function App(){
-    var rended = 0;
-    var [items,setItems]= useState([]);
-    const [isShowForm,setIsShowForm]= useState(false);
-    const [strSearch,setStrSearch]= useState('');
-    const [orderBy,setOrderBy]= useState('name');
-    const [orderDir,setOrderDir]= useState('asc');
-    const [itemSelected,setItemSelected]= useState(null);
+    const dispatch = useDispatch();
 
+    var items = useSelector(state => state.tasks);
+    var isShowForm = useSelector(state => state.isShowForm);
+    var strSearch = useSelector(state => state.strSearch);
+    var orderBy = useSelector(state => state.orderBy);
+    var orderDir = useSelector(state => state.orderDir);
+    var itemSelected = useSelector(state => state.itemSelected);
 
     useEffect( () => {
-        if(rended == 0){
-            rended = 1;
-            let itemsterm = JSON.parse(localStorage.getItem('task')) || [];
-            setItems(itemsterm);
-        }
-    })
+        let itemsterm = JSON.parse(localStorage.getItem('task')) || [];
+        dispatch(actSetItems(itemsterm));
+    },[])
 
     const handleSubmit = (item) => {
         let id      = null;
@@ -42,43 +43,43 @@ function App(){
             name    : item.name,
             level   : +item.level
         })
-        setItems(items);
-        setIsShowForm(false);
+        dispatch(actSetItems(items));
+
+        dispatch(actSetIsShowForm(false));
 
         localStorage.setItem('task', JSON.stringify(items));
 
     }
 
     const handleEdit = (item) => {
-        setIsShowForm(true);
-        setItemSelected(item);
+        dispatch(actSetIsShowForm(true));
+        dispatch(actsetItemSelected(item));
     }
 
     const handleDelete = (id) => {
         remove(items, (item)=> {
             return item.id === id;
         });
-        setItems(items);
-
+        dispatch(actSetItems(items));
         localStorage.setItem('task', JSON.stringify(items));
     }
 
     const handleSort = (orderBy, orderDir) => {
-        setOrderBy(orderBy);
-        setOrderDir(orderDir);
+        dispatch(actSetOrderBy(orderBy));
+        dispatch(actSetOrderDir(orderDir));
     }
 
     const handleToggleForm = () => {
-        setIsShowForm(!isShowForm);
-        setItemSelected(null);
+        dispatch(actSetIsShowForm(!isShowForm));
+        dispatch(actsetItemSelected(null));
     }
 
     const handleSearh = (value) =>{
-        setStrSearch(value);
+        dispatch(actSetStrSearch(value));
     }
 
     const closeForm = () => {
-        setIsShowForm(false);
+        dispatch(actSetIsShowForm(false));
     }
 
     let elmForm     = null;
@@ -94,7 +95,6 @@ function App(){
 
     if(isShowForm) {
         elmForm = <Form 
-            itemSelected={itemSelected} 
             onClickSubmit={handleSubmit} 
             onClickCancel={closeForm}
         />;
