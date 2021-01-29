@@ -6,11 +6,16 @@ import 'dayjs/locale/vi';
 dayjs.locale('vi');
 dayjs.extend(relativeTime);
 
-const DEFAULT_IMAGE = 'https://www.tibs.org.tw/images/default.jpg';
+const defaultAvatars = [
+    '/images/pullDog.jpg',
+    '/images/avatar2.jpg',
+    '/images/avatar3.jpg',
+    '/images/avatar4.jpg',
+]
 
 export default function ArticleItemInfor({
     created,
-    // authorId,
+    authorId,
     authorName,
     authorAvatar,
     authorLink
@@ -20,12 +25,14 @@ export default function ArticleItemInfor({
     const createdDateStr = createdDate.format('DD/MM/YYYY');
     const currentDate = dayjs();
     const relativeTimeStr = createdDate.from(currentDate);
+    const idxDefaultAvatar = authorId % defaultAvatars.length;
     
+
     return (
         <div className="article-item__info">
             <div className="article-item__author-image">
                 <Link to={authorLink}>
-                    <img src={authorAvatar || DEFAULT_IMAGE} />
+                    <img src={authorAvatar || defaultAvatars[idxDefaultAvatar]} alt={authorName} />
                 </Link>
             </div>
             <div className="article-item__info-right">

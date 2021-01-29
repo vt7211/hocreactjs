@@ -2,7 +2,8 @@ import { PostService } from "../../services/post";
 
 export const ACT_FETCH_LATEST_POSTS = 'ACT_FETCH_LATEST_POSTS';
 export const ACT_FETCH_POPULAR_POSTS = 'ACT_FETCH_POPULAR_POSTS';
-export const ACT_FETCH_LIST_POSTS = 'ACT_FETCH_LIST_POSTS';
+export const ACT_FETCH_POSTS = 'ACT_FETCH_POSTS';
+
 
 // Action creator
 export function actFetchLatestPosts({ posts = [] } = {}) {
@@ -14,7 +15,6 @@ export function actFetchLatestPosts({ posts = [] } = {}) {
   }
 }
 export function actFetchPopularPosts({ posts = [] } = {}) {
-  // console.log("actFetchPopularPosts",posts);
   return {
     type: ACT_FETCH_POPULAR_POSTS,
     payload: {
@@ -22,17 +22,22 @@ export function actFetchPopularPosts({ posts = [] } = {}) {
     }
   }
 }
-export function actFetchListPosts({ posts = [], page = 1 } = {}) {
-  // console.log("actFetchPopularPosts",posts);
+export function actFetchPosts({
+  posts = [],
+  page = 1,
+  per_page = 3,
+  totalPages = 1
+} = {}) {
   return {
-    type: ACT_FETCH_LIST_POSTS,
+    type: ACT_FETCH_POSTS,
     payload: {
       posts,
-      page
+      page,
+      per_page,
+      totalPages
     }
   }
 }
-
 
 // Action async
 export const actFetchLatestPostsAsync = () => {
@@ -65,18 +70,26 @@ export const actFetchPopularPostsAsync = () => {
     }
   }
 }
-export const actFetchListPostsAsync = () => {
-  return async (dispatch, getState) => {
+export const actFetchPostsAsync = ({
+  page = 1,
+  per_page = 2
+} = {}) => {
+  return async dispatch => {
     try {
-      let pageHome = getState().Post.pageHome;
-      const response = await PostService.getListPostsAll();
-      
-      console.log('pageHome',pageHome);
+      const response = await PostService.getListPosts({
+        page,
+        per_page
+      });
+      const headers = response.headers;
+      // const totalElement = headers['x-wp-total'];
+      const totalPages = Number(headers['x-wp-totalpages']);
       const posts = response.data;
-      const page = 1;
-      dispatch(actFetchListPosts({
+
+      dispatch(actFetchPosts({
         posts,
-        page
+        page,
+        per_page,
+        totalPages
       }))
 
     } catch(e) {
@@ -84,3 +97,17 @@ export const actFetchListPostsAsync = () => {
     }
   }
 }
+
+
+/*
+Trên server tổng 6 phần tử 
+
+Trong lần đầu tiên F5 lại trang -> Mặc định tải trang 1 (Từ trang homepage dispatch action): currentPage = 1
+
+Bắt sự kiện onClick vào button LoadMore 
+Mỗi lần click 
+  -> kiểm tra xem còn page để tải hay không???
+  -> Nếu còn page để tải thêm thì tăng curentPage lên 1 đơn vị -> currentPage = 2
+  -> Gọi API (dispatch lại actFetchPosts) lấy data mới về ứng với currentPage = 2
+
+*/

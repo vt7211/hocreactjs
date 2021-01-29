@@ -12,6 +12,8 @@ export default function ArticleItem({
     post,
     isStyleRow,
     isStyleCard,
+    isShowDesc = false,
+    isShowCategories = false,
 }) {
     const classes = cls('article-item', {
         'style-row': isStyleRow,
@@ -26,11 +28,16 @@ export default function ArticleItem({
     const slugLink = `/post/${post.slug}`;
     const thumbnail = post.featured_media_url;
 
+    const authorId = post.author;
     const authorName = post.author_data.nickname;
     const authorAvatar = post.author_data.avatar;
     const authorLink = `/user/${post.author}`;
 
     const created = post.date;
+
+    const shortDesc = post.excerpt.rendered
+    const viewCount = post.view_count;
+    const categoriesId = post.categories;
 
     return (
         <article className={classes}>
@@ -40,17 +47,22 @@ export default function ArticleItem({
                 thumbnail={thumbnail}
             />
             <div className="article-item__content">
-                { isStyleCard && <ArticleItemCategories /> }
-                { isStyleCard && <ArticleItemStats /> }
+                { isShowCategories && <ArticleItemCategories categoriesId={categoriesId} /> }
+                { isShowCategories && <ArticleItemStats viewCount={viewCount} /> }
                 
                 <ArticleItemTitle 
                     title={title} 
                     slugLink={slugLink}
                 />
 
-                { isStyleCard && <ArticleItemDesc /> }
+                { isShowDesc && (
+                    <ArticleItemDesc 
+                        shortDesc={shortDesc}
+                    />
+                ) }
                 <ArticleItemInfor 
                     created={created}
+                    authorId={authorId}
                     authorName={authorName}
                     authorLink={authorLink}
                     authorAvatar={authorAvatar}

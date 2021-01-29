@@ -8,7 +8,6 @@ const initAuthState = {
 }
 
 export default function reducer(state = initAuthState, action) {
-  console.log('reducer run', action);
   switch (action.type) {
     case ACT_SET_LOGIN:
       state.isLogin = action.payload.isLogin;

@@ -1,60 +1,77 @@
-import './ArticlesPopular.css';
-
-import MainTitle from "../../common/MainTitle";
+import ArticleItem from '../ArticleItem';
+import MainTitle from '../../common/MainTitle';
 import Container from '../../common/Container';
-import {useSelector} from 'react-redux';
-
-import ArticleItem from "../ArticleItem";
-// import {last, remove} from 'lodash';
-
+import Button from '../../common/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import Col from '../../common/Col';
+import Row from '../../common/Row';
+import { actFetchPostsAsync } from '../../store/post/actions';
+import { useState } from 'react';
 
 export default function ArticlesList() {
-    let count = 0;
-    const posts = useSelector(state => state.Post.articlesList);
-    
-    return (
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false); // Chưa tải
+  const articlesPaging = useSelector(state => state.Post.articlesPaging)
+  const posts = articlesPaging.list;
+  const { currentPage, totalPage, per_page } = articlesPaging
 
-        // list sesstion 
-        <div className="articles-list section">
-        <div className="tcl-container">
-            {/* Main Title */}
-            <MainTitle 
-            isShowBtn 
-            btnProps={{
-                htmlType: 'a',
-                href: '/posts',
-                btnText: 'View more'
-            }}>News List</MainTitle>
-            {/* End Main Title */}
-            {/* End Row News List */}
-            <div className="tcl-row">
-                <div className="tcl-col-12 tcl-col-md-6">
-                    {
-                    posts.map((post, key) => {
-                        count++;
-                        if(count === 3) return null;
-                        return (
-                            <div key={key} className="tcl-col-12 tcl-col-md-6">
-                                <ArticleItem post={post} isStyleCard />
-                            </div>
-                        )
-                    })
-                    }
-                </div>
-            </div>
-            {/* End Row News List */}
-            {/* Btn Loadmore */}
+  const hasMorePosts = currentPage < totalPage;
+
+  async function handleLoadMore() {
+    if (hasMorePosts === false || loading === true) {
+      return;
+    }
+
+    setLoading(true); // Đã chuẩn bị dispatch một action rồi
+    const actionAsync = actFetchPostsAsync({
+      per_page,
+      page: currentPage + 1,
+    })
+
+    await dispatch(actionAsync); // Chờ gọi API xong
+    setLoading(false);
+  }
+
+  // function handleLoadMore() {
+  //   if (hasMorePosts === true) {
+  //     // Viết dưới đây
+  //   }
+  // }
+
+  return (
+    <div className="articles-list section">
+      <Container>
+        
+        <MainTitle >Danh sách bài viết</MainTitle>
+        
+        <Row>
+          {
+            posts.map(post => {
+              return (
+                <Col xs={12} md={6} key={post.id}>
+                  <ArticleItem isStyleCard post={post} />
+                </Col>
+              )
+            })
+          }
+        </Row>
+
+        {
+          hasMorePosts && (
             <div className="text-center">
-                <button className="btn btn-primary btn-size-large">
-                    <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-                    <circle cx={50} cy={50} fill="none" stroke="currentColor" strokeWidth={10} r={35} strokeDasharray="164.93361431346415 56.97787143782138" transform="rotate(120.057 50 50)">
-                        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1" />
-                    </circle>
-                    </svg>
-                    Load more
-                </button>
+              <Button 
+                type="primary" 
+                isSizeLarge 
+                isLoading={loading}
+                onClick={handleLoadMore}
+              >
+                Tải thêm
+              </Button>
             </div>
-        </div>
-        </div>
-    )
+          )
+        }
+      </Container>
+    </div>
+
+  )
 }

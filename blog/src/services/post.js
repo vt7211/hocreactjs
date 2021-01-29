@@ -43,10 +43,5 @@ export const PostService = {
     return PostService.getListPosts({
       orderby: "post_views"
     });
-  },
-  getListPostsAll() {
-    return PostService.getListPosts({
-      per_page: 6
-    });
   }
 }

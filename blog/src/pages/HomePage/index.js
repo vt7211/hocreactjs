@@ -5,8 +5,8 @@ import ArticlesPopular from '../../components/ArticlesPopular';
 import ArticlesList from '../../components/ArticlesList';
 import { 
   actFetchLatestPostsAsync, 
-  actFetchPopularPostsAsync,
-  actFetchListPostsAsync,
+  actFetchPopularPostsAsync, 
+  actFetchPostsAsync
 } from '../../store/post/actions';
 
 export default function HomePage() {
@@ -15,7 +15,7 @@ export default function HomePage() {
   useEffect(() => {
     dispatch(actFetchLatestPostsAsync());
     dispatch(actFetchPopularPostsAsync());
-    dispatch(actFetchListPostsAsync());
+    dispatch(actFetchPostsAsync());
   }, []);
 
   return (
